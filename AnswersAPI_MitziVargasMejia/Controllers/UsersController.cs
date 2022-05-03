@@ -6,14 +6,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AnswersAPI_MitziVargasMejia.Models;
+using AnswersAPI_MitziVargasMejia.Attributes;
+using AnswersAPI_MitziVargasMejia.Tools;
+
 
 namespace AnswersAPI_MitziVargasMejia.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKey]
     public class UsersController : ControllerBase
     {
         private readonly AnswersDBContext _context;
+        private Tools.Crypto MyCrypto { get; set; }
 
         public UsersController(AnswersDBContext context)
         {
@@ -39,6 +44,46 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
             }
 
             return user;
+        }
+
+        //validacion para el login
+        [HttpGet("ValidateUserLogin")]//definir el nombre del get
+        public async Task<ActionResult<User>> ValidateUserLogin(string pEmail, string pPassword)
+        {
+            try
+            {
+                //se valida el usuario por email y el password encriptado a nivel de api
+                string ApiLevelEncriptedPassword = MyCrypto.EncriptarEnUnSentido(pPassword);
+
+                //TAREA: Hacer esta misma consulta pero usando LINQ
+                //var qu = _context.Users.Select(u => u.UserName == pEmail && u.UserPassword == ApiLevelEncriptedPassword);
+
+                /*var query = from u in _context.Users
+                            where u.UserName.Equals(pEmail) && u.UserPassword.Equals(ApiLevelEncriptedPassword)
+                            select u;
+
+                if (query == null)
+                {
+                    return NotFound();
+                }*/
+
+                /* revisar porque cae*/
+                 var user = await _context.Users.SingleOrDefaultAsync(e => e.UserName == pEmail && e.UserPassword == ApiLevelEncriptedPassword);
+
+
+                //si no hay respuesta en la consulta se devuelve el mensaje hhtp Not found
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         // PUT: api/Users/5

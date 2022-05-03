@@ -27,6 +27,7 @@ namespace AnswersAPI_MitziVargasMejia.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<UserStatus> UserStatuses { get; set; }
+        public virtual DbSet<View1> View1s { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -134,7 +135,9 @@ namespace AnswersAPI_MitziVargasMejia.Models
 
                 entity.Property(e => e.ChatId).HasColumnName("ChatID");
 
-                entity.Property(e => e.Date).HasColumnType("smalldatetime");
+                entity.Property(e => e.Date)
+                    .HasColumnType("smalldatetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Message)
                     .IsRequired()
@@ -246,7 +249,7 @@ namespace AnswersAPI_MitziVargasMejia.Models
 
                 entity.Property(e => e.UserRoleId).HasColumnName("UserRoleID");
 
-                entity.Property(e => e.UserStatuId).HasColumnName("UserStatuID");
+                entity.Property(e => e.UserStatusId).HasColumnName("UserStatusID");
 
                 entity.HasOne(d => d.Country)
                     .WithMany(p => p.Users)
@@ -260,9 +263,9 @@ namespace AnswersAPI_MitziVargasMejia.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKUser854768");
 
-                entity.HasOne(d => d.UserStatu)
+                entity.HasOne(d => d.UserStatus)
                     .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.UserStatuId)
+                    .HasForeignKey(d => d.UserStatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKUser472287");
             });
@@ -282,14 +285,39 @@ namespace AnswersAPI_MitziVargasMejia.Models
 
             modelBuilder.Entity<UserStatus>(entity =>
             {
-                entity.HasKey(e => e.UserStatuId)
-                    .HasName("PK__UserStat__DE1EE8FBBF4C4A17");
-
                 entity.ToTable("UserStatus");
 
-                entity.Property(e => e.UserStatuId).HasColumnName("UserStatuID");
+                entity.Property(e => e.UserStatusId).HasColumnName("UserStatusID");
 
                 entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<View1>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_1");
+
+                entity.Property(e => e.Date).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Message)
+                    .IsRequired()
+                    .HasMaxLength(1024)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReceiverId).HasColumnName("ReceiverID");
+
+                entity.Property(e => e.SenderId).HasColumnName("SenderID");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserRole)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false);

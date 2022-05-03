@@ -11,6 +11,7 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Attributes.ApiKey]
     public class AsksController : ControllerBase
     {
         private readonly AnswersDBContext _context;
@@ -39,6 +40,22 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
             }
 
             return ask;
+        }
+
+        //un consultar que vamos a hacer
+        [HttpGet("GetQuestionsListByUserID")]
+        public async Task<ActionResult<IEnumerable<Ask>>> GetQuestionsListByUserID(int pUserID)
+        {
+            //esto esel equvalente a un select con un where
+            var Qlist = await _context.Asks.Where(u => u.UserId == pUserID).ToListAsync();
+
+
+            if (Qlist == null)
+            {
+                return NotFound();
+            }
+
+            return Qlist;
         }
 
         // PUT: api/Asks/5

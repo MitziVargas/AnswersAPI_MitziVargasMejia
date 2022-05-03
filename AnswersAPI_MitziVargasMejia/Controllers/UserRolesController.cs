@@ -11,6 +11,7 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Attributes.ApiKey]
     public class UserRolesController : ControllerBase
     {
         private readonly AnswersDBContext _context;

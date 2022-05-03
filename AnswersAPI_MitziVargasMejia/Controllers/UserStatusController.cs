@@ -46,7 +46,7 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUserStatus(int id, UserStatus userStatus)
         {
-            if (id != userStatus.UserStatuId)
+            if (id != userStatus.UserStatusId)
             {
                 return BadRequest();
             }
@@ -80,7 +80,7 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
             _context.UserStatuses.Add(userStatus);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserStatus", new { id = userStatus.UserStatuId }, userStatus);
+            return CreatedAtAction("GetUserStatus", new { id = userStatus.UserStatusId }, userStatus);
         }
 
         // DELETE: api/UserStatus/5
@@ -101,7 +101,7 @@ namespace AnswersAPI_MitziVargasMejia.Controllers
 
         private bool UserStatusExists(int id)
         {
-            return _context.UserStatuses.Any(e => e.UserStatuId == id);
+            return _context.UserStatuses.Any(e => e.UserStatusId == id);
         }
     }
 }
